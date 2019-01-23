@@ -56,7 +56,7 @@
     <Folder Include="My Project\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LimeLoader.vb" />
+    <Compile Include="Program.vb" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Management" />
